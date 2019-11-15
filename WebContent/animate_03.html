@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="EUC-KR">
+<title>animate</title>
+<style type="text/css">
+	div {
+		width : 50px; height : 50px;
+		background-color : #f100e5;
+		position : relative;
+	}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+	$(document).ready(function() {
+		$("div").each(function(index) { // each : 각각
+			$(this).delay(index *500).animate({ // animate를 실행하는데 0.5초 delay해줘
+				left : 250
+			}, 'slow')
+		}, function(index) {
+			$(this).delay(index *1000).animate({
+				left : 0
+			}, 'slow')
+		})
+	})
+</script>
+</head>
+<body>
+<div></div><div></div>
+<div></div><div></div>
+<div></div><div></div>
+</body>
+</html>

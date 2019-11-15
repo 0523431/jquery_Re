@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="EUC-KR">
+<title>Toggle 함수</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+	// toggle() 메서드는..
+	// show()와 hide()를 동시에 처리해 줌
+	$(function() {
+		$("button").click(function() {
+			$(".page").toggle("fast")
+		})
+	})
+</script>
+</head>
+<body>
+
+
+<button>Toggle Show</button>
+<div class="page">
+	<h1>Header 태그입니다.</h1>
+	<p>내용부분입니다</p>
+</div>
+</body>
+</html>

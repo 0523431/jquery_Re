@@ -16,8 +16,17 @@
 			})
 		}) */
 		
+		/* $("h1").click(function() {
+			$("#wrap").append(function(index) {
+				return "<h1>"+ cnt++ +" - "+h+"</h1>";
+			})
+		}) */
+		
 		$("h1").click(function() {
-			$("#wrap").attr("h1",cnt++,h).appendTo("body")
+			var len = $("h1").length; // h1태그의 개수 ==> 내가 쓴 cnt와 같은...
+			var thtml = $(this).html();
+			$("#wrap").append("<h1>"+ len + "-" + thtml + "</h1>");
+			// id wrap에 추가해라
 		})
 	})
 </script>

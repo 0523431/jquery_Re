@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="EUC-KR">
+<title>animate method 예제</title>
+<style type="text/css">
+	div {
+		width : 50px; height : 50px;
+		background-color : #f100e5;
+		position : relative;
+	}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("#div1").click(function() {
+			var width = $(this).css("width"); // 클릭된 div태그인 this의 가로 길이를 가져옴
+			var height = $(this).css("height"); // 클릭된 div태그인 this의 세로 길이를 가져옴
+			$(this).animate({
+				// 방법1
+				// width : parseInt(width) +50,
+				// height : parseInt(height) +50
+				
+				// 방법2
+				width : "+=50",
+				height : "+=50"
+			}, 'fast')
+		})
+		
+		$("#div2").click(function() {
+			$(this).animate({
+				left : "+=50"
+			}, 2000); // 움직이는 시간을 조절할 수 있음 'slow'는 고정된 시간
+		})
+		
+		$("#div3").click(function() {
+			$(this).animate({
+				left : "+=50"
+			}, 2000).animate({
+				width : "+=50"
+			}, 1000).animate({
+				height : "+=50"
+			}, 1000); // 2초동안 움직고 순서대로 커짐
+		})
+		
+		$("#div4").animate({
+			width : "+=50"
+		}, 2000)
+		$("#div4").animate({
+			left : "+=50"
+		}, 2000)
+		$("#div4").animate({
+			height : "+=50"
+		}, 2000)
+		
+		setTimeout(function() {
+			$("#div4").clearQueue(); // animation queue를 제거 ==> 더이상 animation 실행 xxx
+			$("#div4").hide(); // 보이지 않도록 설정하는 method
+		}, 6000)
+		setTimeout(function() {
+			$("#div4").show(); // 보이도록 설정
+		}, 7000)
+	})
+</script>
+</head>
+
+<body>
+<div id="div1"></div>
+<br>
+<div id="div2"></div>
+<br>
+<div id="div3"></div>
+<br>
+<div id="div4"></div>
+</body>
+</html>
