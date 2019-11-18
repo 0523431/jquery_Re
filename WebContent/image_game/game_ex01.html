@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="EUC-KR">
+<title>그림 맞추기 게임</title>
+<style type="text/css">
+	table, td {
+		border : 1px solid gray;
+	}
+	table {
+		border-collapse : collapse;
+	}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript">
+	var level =4;
+	$(document).ready(function() {
+		// 함수로 나눠서 정리
+		shuffle();
+		editHtml();
+		game();
+	})
+	
+	// card배열의 이미지들을 cnt만큼 섞기
+	function shuffle() {
+		card = ["S_1.jpg","S_1.jpg","S_2.jpg","S_2.jpg",
+				 "S_3.jpg","S_3.jpg","S_4.jpg","S_4.jpg",
+				 "S_5.jpg","S_5.jpg","S_6.jpg","S_6.jpg",
+				 "S_7.jpg","S_7.jpg","S_8.jpg","S_8.jpg",
+				 "S_9.jpg","S_9.jpg","S_10.jpg","S_10.jpg",
+				 "pic00.png","pic00.png","pic01.png","pic01.png",
+				 "pic02.png","pic02.png","pic03.png","pic03.png",
+				 "pic04.png","pic04.png","pic05.png","pic05.png",
+				 "pic06.png","pic06.png","pic07.png","pic07.png"];
+		
+		cnt = level * level; // 그림 개수 ==> 4*4=16개
+		
+		for(var a=0; a<10000; a++) {
+			var ran = Math.floor(Math.random() *cnt);
+			// Math.floor에 의해서 0부터 15까지 임의의 수를 가져올 수 있음
+			// Math.floor : 실수보다 작은 근사 정수
+			// Math.ceil : 실수보다 큰 근사 정수 (0부터 16)
+			var tmp = card[0];
+			card[0] = card[ran];
+			card[ran] = tmp;
+		}
+	}
+	
+	// 화면에 출력
+	function editHtml() { // 초기값 4행4열로 출력
+		var board = "<table>";
+		for(var i=0; i<cnt; i++) {
+			if((i%level) ==0) {
+				board +="<tr>";
+			}
+			
+			board +="<td id='"+i+"'><img class='pic' src='"+card[i]+"' value='"+card[i]+"' width='100' height='100'></td>";
+			// 이미지만 별도 폴더에 넣었을 경우 src='./image_game/"+'
+			
+			if((i%level)==(level -1)) { // 한줄을 만들어 주기위해서
+				board += "</tr>";
+			}			
+		}
+		$("#board").html(board+"</table>"); // id속성 값이 board인 div태그
+	}
+	
+	function game() {
+		// setTimeout : 2초후에 함수 실행
+		setTimeout(function() {
+			// class속성 값이 pic인 img태그
+			$(".pic").each(function(i, item) {
+				// opacity : 투명도 (1:불투명 >>>>> 0:투명)
+				$(this).css("opacity", "0.01"); // 2초후에 이미지 감추기
+			})
+		}, 2000);
+		
+		var total =0; // 클릭수
+		var count =0; // 선택순서 (첫번째 선택, 두번째 선택)
+		var success =0; // 성공 개수
+		var onePic =null; // 첫번째 클릭된 이미지
+		var twoPic =null; // 두번째 클린된 이미지
+		
+		$(".pic").click(function() { // 이미지가 클릭됐을 경우 이벤트 등록 (이벤트처리)
+			// 클릭된 이미지의 class 속성이 diepic가 아닌 경우(boolean)
+			// 맞고 안맞고를 떠나서 클릭을 유효하게 만듦
+			if(!$(this).is(".diepic")) {
+				total++; // 클릭수 증가
+				$(this).css("opacity", 1); // 클릭한 이미지 보여주기
+				count++;
+				if(count ==1) {
+					onePic =$(this); // 클릭된 이미지
+					one_tr = $(this).parent().parent().index();
+					one_td = $(this).parent().index();
+					
+				} else if(count ==2) {
+					twoPic =$(this);
+					two_tr = twoPic.parent().parent().index(); // img>td>tr
+					two_td = twoPic.parent().index(); // img>td
+					
+					console.log(one_tr + "," + one_td)
+					console.log(two_tr + "," + two_td)
+					
+					if(one_tr == two_tr && one_td == two_td) {
+						alert("같은 그림을 눌렀다");
+					}
+					if((onePic.attr("src") == twoPic.attr("src")) && (one_tr != two_tr || one_td != two_td)) { // 같은 이미지를 선택한 경우
+						success++;
+						
+						onePic.addClass("diepic"); // diepic 속성을 추가
+						twoPic.addClass("diepic"); // 선택할 수 없음
+						onePic.disable =true; // 선택 불가능하도록 disable
+						twoPic.disable =true; // 비활성화
+						
+						if(cnt/2 == success) { // 모든 이미지 찾기 성공(2개의 같은 그림이니까)
+							alert(total+"번 만에 성공. 게임종료!");
+							setTimeout(function() {
+								if(confirm("게임을 계속하시겠습니까?")) {
+									location.reload(); // url 다시 실행 (재실행)
+								}
+							}, 2000);
+						}
+					} else { // 다른 이미지를 선택한 경우
+						setTimeout(function() {
+							onePic.css("opacity", "0.01");
+							twoPic.css("opacity", "0.01");
+						}, 50);
+					}
+					count =0; // 이미지 선택 순서 clear
+				} else { // count >2 인 경우 (count가 1도 아니고 2도 아닌 경우)
+					alert("프로그램 오류 발생");
+				}
+			} // diepic이 아닌 경우의 조건문 끝
+		}) // click이벤트 종료
+	} // game 함수 종료
+	
+	function gamestart(sel) { // sel : select태그
+		level = parseInt(sel.value); // sel.value : 2, 4, 6
+		shuffle();
+		editHtml();
+		game();
+	}
+</script>
+</head>
+<body>
+
+<select id="level" onchange="gamestart(this)">
+	<option value="2">2 x 2</option>
+	<option value="4" selected="selected">4 x 4</option> <!-- 초기값 지정 -->
+	<option value="6">6 x 6</option>
+</select>
+<div id="board">
+	<!-- 내용 -->
+</div>
+
+</body>
+</html>
