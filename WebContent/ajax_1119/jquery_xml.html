@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="EUC-KR">
+<title>XML 연습</title>
+<!-- 버튼을 누르면 xml데이터를 읽어서 파싱 후 화면에 출력하기 -->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		
+		$.ajax("address.xml", {
+			success : function(data) {
+				htmlcss = "<select>";
+				$(data).each(function() {
+					htmlcss += "<option>"+$(this).text()+"</option>"
+				})
+				htmlcss += "</select>";
+				$("#select1").append(htmlcss)
+			},
+			error : function(e) {
+				alert("서버오류 : " + e.status);
+			}
+		}) // $.ajax 끝
+		
+		$.ajax("address.xml", {
+			success : function(data) {
+				htmlcss = "<select>";
+				$(data).find("state").each(function() {
+					htmlcss += "<option>"+$(this).text()+"</option>"
+				})
+				
+				htmlcss += "</select>";
+				$("#select2").append(htmlcss)
+			},
+			error : function(e) {
+				alert("서버오류 : " + e.status);
+			}
+		}) // $.ajax 끝
+		
+		$("#btn").click(function() {
+			$.ajax("person.xml", {
+				// person.xml을 data로 받아옴
+				// $(data)가 dom tree가 되는 거야 (dom객체의 최상단을 뜻함)
+				success : function(data) {
+					$(data).find("person").each(function() {
+						// $(this) : person.xml의 person태그를 의미함 =>↑find("person")
+						name = "<li>" + $(this).find("name").text()+"</li>"
+						gender = "<li>" + $(this).find("gender").text()+"</li>"
+						part = "<li>" + $(this).find("part").text()+"</li>"
+						$("#person").append("<ul>"+name+gender+part+"</ul>")
+					})
+				},
+				error : function(e) {
+					alert("서버오류 : " + e.status);
+				}
+			}) // $.ajax 끝
+		})
+		
+		$("#allbtn").click(function() {
+			$.ajax("address.xml", {
+				// address.xml을 data로 받아옴
+				// $(data)가 dom tree가 되는 거야 (dom객체의 최상단을 뜻함)
+				success : function(data) {
+					/* $(data).find("state").each(function() {
+						// $(this) : address.xml의 state태그를 의미함 =>↑find("state")
+						state = "<li>" + $(this).text()+"</li>"
+						$("#state").append("<ul>"+state+"</ul>")
+					}) */
+					
+					$("#state").append("<ul>")
+					$(data).find("state").each(function() {
+						$("#state").append("<li>"+$(this).text()+"</li>")
+					})
+					$("#state").append("</ul>")
+				},
+				error : function(e) {
+					alert("서버오류 : " + e.status);
+				}
+			}) // $.ajax 끝
+		})
+	})
+	
+	function stateprint(st) {
+		$("#state").html("");
+		$.ajax("address.xml", {
+			success : function(data) {
+				$("#state").append("<ul>")
+				$(data).find(st).find("state").each(function() {
+					$("#state").append("<li>" + $(this).text() + "</li>")
+				})
+				$("#state").append("</ul>")
+			},
+			error : function(e) {
+				alert("서버오류 : "+e.status);
+			}
+		})
+	}
+</script>
+</head>
+<body>
+
+<button id="btn">XML 연습</button>
+<button id="allbtn">전체 구</button>
+<button id="allbtn2">select로 나올까</button>
+
+<!-- jquery와 상관없는 javascript영역 => 함수로 처리함 -->
+<button onclick="stateprint('east')">동쪽구</button>
+<button onclick="stateprint('west')">서쪽구</button>
+<button onclick="stateprint('south')">남쪽구</button>
+<button onclick="stateprint('north')">북쪽구</button>
+
+<div id="person">
+</div>
+<div id="state">
+</div>
+<div id="select1">
+</div>
+<div id="select2">
+</div>
+</body>
+</html>

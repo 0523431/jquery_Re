@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="EUC-KR">
+<title>Jquery를 이용한 AJAX 연습</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		
+		// id속성값이 button1인 버튼을 누르면,
+		$("#button1").click(function() {
+			$.ajax(
+					"ajax1-1.jsp", { // => url부분
+					success : function(data) { // 콜백함수
+					$("body").append(data);
+					},
+					error : function(e) {
+						alert("서버오류 : " + e.status);
+						// url이 없을 때, 404오류
+					}
+			})
+		})
+		
+		$("#removeb1").click(function() {
+			$("h1").get(-1).remove();
+			// h1태그의 순서
+			// $("h1").eq(0) = $("h1").get(0)
+			// $("h1").get(-1) == $("h1:last")와 같은 의미
+		})
+		
+		$("#button2").click(function() {
+			
+//			var data = "name=홍길동&blood=AB&age=20";
+			var data = {name:"홍길동", blood:"AB형", age:"20"};
+
+			// ajax 사용할거라는 약속의 표시
+			// 그리고 그에 맞는 정해진 key값이 있어(url/type/data/...)
+			$.ajax({ // (json형태)
+				url : "ajax1-2.jsp",
+				// type : method방식 설정 (기본:GET)
+				type : "POST",
+				// parameter 설정
+				// 띄어쓰기 안됨 / 순서 상관없음 / 변수명 사용 가능
+				data : data,
+				// 서버에서 정상 응답시,
+				success : function(data) {
+					$("body").append(data);
+				},
+				// 서버에서 오류 응답시,
+				error : function(e) {
+					alert("서버오류 : " + e.status);
+				}
+			})
+		})
+		
+		$("#removeb2").click(function() {
+			$("h2").eq(-1).remove();
+			// h1태그의 순서
+			// $("h1").eq(0) = $("h1").get(0)
+			// $("h1").get(-1) == $("h1:last")와 같은 의미
+		})
+	})
+
+	// 함수 사용에 있어서 선택자가 중요해
+	// 내가 어떤 태그를 사용했는지
+</script>
+</head>
+<body>
+<H1>반드시 jquery환경을 설정해야 xml을 사용할 수 있음</H1>
+<button id="button1">
+	ajax1-1.jsp 호출
+</button>
+<button id="removeb1">
+	ajax1-1.jsp 추가된 내용 제거
+</button>
+
+<button id="button2">
+	ajax1-2.jsp 호출
+</button>
+<button id="removeb2">
+	ajax1-2.jsp 추가된 내용 제거
+</button>
+
+</body>
+</html>

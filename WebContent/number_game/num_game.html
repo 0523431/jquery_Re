@@ -2,12 +2,141 @@
 <html>
 <head>
 <meta charset="EUC-KR">
-<title>Insert title here</title>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script type="text/javascript">
+<title>숫자 야구 게임</title>
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<style type="text/css">
+	* {
+		text-align : center;
+		margin : 0px;
+		padding : 0px;
+	  }
+</style>
+<script>
+	var trycount =0; // 시도횟수
+	var nums = new Array(10);
+	var answer = new Array(4); // 배열nums에서 임의의 수 4개를 저장 => 정답
+	var inputarr = new Array(4); // 입력한 숫자 4개를 저장
+	
+	// 0부터 9까지의 숫자 배열
+	for(var i=0; i<nums.length; i++) {
+		nums[i] = i;
+	}
+	// 배열nums를 10000번 섞어줌
+	for(var a=0; a<10000; a++) {
+		var ran = Math.floor(Math.random() *nums.length);
+		var tmp = nums[0];
+		nums[0] = nums[ran];
+		nums[ran] = tmp;
+	}
+	// 배열nums에서 4개의 숫자를 정답배열answer에 저장
+	for(var i=0; i<4; i++) {
+		answer[i] = nums[i]
+		console.log(answer[i])
+	}
+	
 	$(document).ready(function() {
-		$(.userNum)
+		// 테두리가 있는 이미지 박스 4개
+		for(var i=0; i<4; i++) {
+			$("#card").append("<img width='100' height='100' border='1' />");
+		}
+		// 입력button을 클릭했을 때,
+		$("#inbtn").click(function() {
+			if(!$("#userNum").val()) { // value값이 없으면
+				alert("숫자를 입력해주세요");
+				$("#userNum").focus();
+				return;
+			}
+			if(isNaN($("#userNum").val())) { // isNaN : 숫자여부를 판단하는 함수
+				alert("숫자 타입으로 입력해주세요");
+				$("#userNum").val("");
+				$("#userNum").focus();
+				return;
+			}
+			if($("#userNum").val().length !=4) {
+				alert("4자리 숫자로 입력해주세요");
+				$("#userNum").val("");
+				$("#userNum").focus();
+				return;
+			}
+			
+			inputarr = $("#userNum").val().split("");
+			
+			for(var v1 in inputarr) {
+				var cc =0;
+				for(var v2 in inputarr) {
+					if(inputarr[v1] == inputarr[v2]) {
+						cc++;
+					}
+				}
+				if(cc >1) {
+					alert("중복된 숫자를 입력할 수 없습니다.");
+					$("#userNum").val(""); // value값을 빈칸으로 만들어줌
+					$("#userNum").focus();
+					return;
+				}
+			}
+			
+			// 함수 matchingNum()
+			matchingNum($("#userNum").val());
+			$("#userNum").val("");
+		})
+		
+		// 숫자를 입력하는 input태그에 enter키가 입력된 경우,
+		// 입력 버튼을 클릭했을 때와 같은 이벤트가 발생하도록 하는 설정
+		$("#userNum").keyup(function() {
+			if(event.keyCode ==13) { // event.keyCode ==13 enter키의 아스키코드 값
+				$("#inbtn").click();
+			}
+		})
+		
+		$("#restart").css("opacity", "0.01");
+		
 	})
+	
+	// strike와 ball을 정의
+	function matchingNum(usernum) {
+		var strike =0;
+		var ball =0;
+		
+		for(var i=0; i<4; i++) {
+			for(var j=0; j<4; j++) {
+				if(answer[j] == inputarr[i]) {
+					if(j==i) {
+						strike++;
+					} else ball++;
+				}
+			}
+		}
+		if(strike ==4) {
+			var wrap = document.getElementById("wrap");
+			$("#wrap").append("<h1>축하합니다 정답입니다</h1>");
+//			$("#wrap").append("<input type='button' value='게임다시시작하기' id='restart'>");
+//			$("#restart").click(function() {
+//				location.reload();
+//			})
+			$("#card img").each(function(index) {
+				$(this).attr("src","./nums/num"+answer[index]+".jpg");
+				$(this).addClass("w3-circle");				
+			})
+			// 게임 다시 시작하기 버튼 보이게 만들기
+			//var restart = document.getElementById("restart");
+			$("#restart").css("opacity", 1);
+			$("#restart").click(function() {
+				location.reload();
+			})
+			
+			// button태그를 이용
+			$("#wrap").append("<button>다시시작</button>");
+			$("button").click(function() {
+				location.reload();
+			})
+		} else {
+			strike += "S ";
+			ball += "B";
+			$("#right").append("<span>" + ++trycount + "번째 도전 : " + strike + ball + ", 유저입력 값 : " + usernum + "</span><br>")
+		}
+	}
 </script>
 </head>
 <body>
@@ -22,7 +151,10 @@
 		<input type="button" value="입력" id="inbtn">
 	</div>
 	<div id="right">
+		<!-- 내용이 들어갈 자리 -->
 	</div>
+	<input type="button" value="게임다시시작하기" id="restart">
 </div>
+
 </body>
 </html>
